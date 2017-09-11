@@ -1,0 +1,223 @@
+#!/bin/bash
+
+echo "#2.1 Create a source folder for your dependencies"
+echo "export SOURCE_FOLDER=$HOME/sources" >> $HOME/.bash_aliases
+echo "export LOCAL_BUILD=$HOME/local-builds" >> $HOME/.bash_aliases
+echo "export LD_LIBRARY_PATH=$HOME/local-builds/lib:$LD_LIBRARY_PATH" >> $HOME/.bash_aliases
+echo "export PATH=$HOME/local-builds/bin:$PATH" >> $HOME/.bash_aliases
+echo "export PKG_CONFIG_PATH=$HOME/local-builds/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bash_aliases
+source $HOME/.bashrc
+mkdir "$SOURCE_FOLDER"
+
+
+read -p "#2.2 Download build tools?(enter for Yes)" BuildTools
+BuildTools=${value:-Yes}
+read -p "#2.3.1: Build nghttp2 from source?" nghttp2
+nghttp2=${value:-Yes}
+read -p "#2.3.2: Build openssl from source?" openssl
+openssl=${value:-Yes}
+read -p "#2.3.3: Build libcurl from source?" libcurl
+libcurl=${value:-Yes}
+read -p "#2.4: Install sqlite?" sqlite
+sqlite=${value:-Yes}
+read -p "#2.5: Build gstreamer libraries?" gstreamerLibraries
+gstreamerLibraries=${value:-Yes}
+read -p "#2.5.1: Build gstreamer-1.10.4?" gstreamer
+gstreamer=${value:-Yes}
+read -p "#2.5.2: Build gst-plugins-base-1.10.4?" gst-plugins-base
+gst-plugins-base=${value:-Yes}
+read -p "#2.5.3: Build gst-libav-1.10.4?" gst-libav
+gst-libav=${value:-Yes}
+read -p "2.5.4: Build gst-plugins-good-1.10.4?" gst-plugins-good
+gst-plugins-good=${value:-Yes}
+read -p "#2.5.5: Build gst-plugins-bad-1.10.4? (Needed for iHeartRadio)" gst-plugins-bad
+gst-plugins-bad=${value:-Yes}
+read -p "#2.6: Build portaudio?" portaudio
+portaudio=${value:-Yes}
+read -p "#2.7.1: Install required packages for Sensory" SensoryPackages
+SensoryPackages=${value:-Yes}
+read -p "#2.7.2: Install Sensory" Sensory
+Sensory=${value:-Yes}
+
+if[$BuildTools == "Yes"]; then
+	echo "#2.2 Download build tools"
+	sudo apt-get -y install git gcc cmake build-essential
+fi
+
+
+echo "#2.3 Set up libcurl with nghttp2 and openssl"
+if[$nghttp2 == "Yes"]; then
+	echo "#2.3.1: Build nghttp2 from source"
+	cd $SOURCE_FOLDER
+	wget https://github.com/nghttp2/nghttp2/releases/download/v1.0.0/nghttp2-1.0.0.tar.gz
+	tar xzf nghttp2-1.0.0.tar.gz
+	cd $SOURCE_FOLDER/*nghttp2*/
+	./configure --prefix=$LOCAL_BUILD --disable-app
+	make -j3
+	sudo make install
+fi
+
+if[$openssl == "Yes"]; then
+	echo "#2.3.2: Build openssl from source"
+	cd $SOURCE_FOLDER
+	wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2a.tar.gz
+	tar xzf openssl-1.0.2a.tar.gz
+	cd *openssl*/
+	./config --prefix=$LOCAL_BUILD --openssldir=$LOCAL_BUILD shared
+	make -j3
+	sudo make install
+fi
+
+if[$libcurl == "Yes"]; then
+	echo "#2.3.3: Build libcurl from source"
+	cd $SOURCE_FOLDER
+	wget https://curl.haxx.se/download/curl-7.50.2.tar.gz
+	tar xzf curl-7.50.2.tar.gz
+	cd *curl*/
+	./configure --with-ssl=$LOCAL_BUILD --with-nghttp2=$LOCAL_BUILD --prefix=$LOCAL_BUILD
+	make -j3
+	sudo make install
+fi
+
+if[$sqlite == "Yes"]; then
+	echo "#2.4: Install sqlite"
+	sudo apt-get -y install sqlite3 libsqlite3-dev
+fi
+
+if[$gstreamerLibraries == "Yes"]; then
+	echo "#2.5: Build gstreamer libraries"
+	sudo apt-get -y install bison flex libglib2.0-dev libasound2-dev pulseaudio libpulse-dev
+	sudo apt-get -y install libfaad-dev libsoup2.4-dev libgcrypt20-dev
+fi
+
+if[$gstreamer == "Yes"]; then
+	echo "#2.5.1: Build gstreamer-1.10.4"
+	cd $SOURCE_FOLDER
+	wget https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.10.4.tar.xz
+	tar xf gstreamer-1.10.4.tar.xz
+	cd *gstreamer*/
+	./configure --prefix=$LOCAL_BUILD
+	make -j3
+	sudo make install
+fi
+
+if[$gst-plugins-base == "Yes"]; then
+	echo "#2.5.2: Build gst-plugins-base-1.10.4"
+	cd $SOURCE_FOLDER
+	wget https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.10.4.tar.xz
+	tar xf gst-plugins-base-1.10.4.tar.xz
+	cd *gst-plugins-base*/
+	./configure --prefix=$LOCAL_BUILD
+	make -j3
+	sudo make install
+fi 
+
+if[$gst-libav == "Yes"]; then
+	echo "#2.5.3: Build gst-libav-1.10.4"
+	cd $SOURCE_FOLDER
+	wget https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.10.4.tar.xz
+	tar xf gst-libav-1.10.4.tar.xz
+	cd *gst-libav*/
+	./configure --prefix=$LOCAL_BUILD
+	make -j3
+	sudo make install
+fi
+
+if[$gst-plugins-good == "Yes"]; then
+	echo "#2.5.4: Build gst-plugins-good-1.10.4"
+	cd $SOURCE_FOLDER
+	wget https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.10.4.tar.xz
+	tar xf gst-plugins-good-1.10.4.tar.xz
+	cd *gst-plugins-good*/
+	./configure --prefix=$LOCAL_BUILD
+	make -j3
+	sudo make install
+fi 
+
+if[$gst-plugins-bad == "Yes"]; then
+	echo "#2.5.5: Build gst-plugins-bad-1.10.4 (Needed for iHeartRadio)"
+	cd $SOURCE_FOLDER
+	wget https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.10.4.tar.xz
+	tar xf gst-plugins-bad-1.10.4.tar.xz
+	cd *gst-plugins-bad*/
+	./configure --prefix=$LOCAL_BUILD
+	make -j3
+	sudo make install
+fi 
+
+if[$portaudio == "Yes"]; then
+	echo "#2.6: Build portaudio"
+	cd $SOURCE_FOLDER
+	wget http://www.portaudio.com/archives/pa_stable_v190600_20161030.tgz
+	tar xf pa_stable_v190600_20161030.tgz
+	cd *portaudio*/
+	./configure --prefix=$LOCAL_BUILD
+	make -j3
+	sudo make install
+fi 
+
+echo "#2.7: Install Sensory"
+if[$SensoryPackages == "Yes"]; then
+	echo "#2.7.1: Install required packages for Sensory"
+	sudo apt-get -y install libasound2-dev
+	sudo apt-get -y install libatlas-base-dev
+	sudo ldconfig
+fi
+
+if[$Sensory == "Yes"]; then
+	echo "#2.7.2: Install Sensory"
+	cd $SOURCE_FOLDER
+	git clone git://github.com/Sensory/alexa-rpi.git
+	bash alexa-rpi/bin/license.sh
+
+	sudo chmod 777 $LOCAL_BUILD/lib
+	cp alexa-rpi/lib/libsnsr.a $LOCAL_BUILD/lib
+
+	sudo chmod -R 777 $LOCAL_BUILD/include
+	cp alexa-rpi/include/snsr.h $LOCAL_BUILD/include
+
+	sudo chmod -R 777 $LOCAL_BUILD
+	mkdir "$LOCAL_BUILD/models"
+	sudo chmod -R 777 $LOCAL_BUILD/models
+	cp alexa-rpi/models/spot-alexa-rpi-31000.snsr $LOCAL_BUILD/models
+fi
+
+echo "#2.8: Make sure everything is up to date"
+sudo apt-get -y update
+
+
+echo "#3. Build the SDK and Run the Sample App on Your Raspberry Pi"
+
+echo "#3.1: Download or clone the AVS Device SDK"
+cd $HOME
+mkdir "AVS_SDK"
+cd AVS_SDK
+git clone git://github.com/alexa/avs-device-sdk.git
+echo "export SDK_SRC=$HOME/AVS_SDK/avs-device-sdk" >> $HOME/.bash_aliases
+source $HOME/.bashrc
+
+echo "#3.2: Create an SDK build with Sensory, GStreamer, and PortAudio:"
+cd $HOME
+mkdir "BUILD"
+cd BUILD
+
+
+cmake $SDK_SRC -DSENSORY_KEY_WORD_DETECTOR=ON -DSENSORY_KEY_WORD_DETECTOR_LIB_PATH=$LOCAL_BUILD/lib/libsnsr.a -DSENSORY_KEY_WORD_DETECTOR_INCLUDE_DIR=$LOCAL_BUILD/include -DGSTREAMER_MEDIA_PLAYER=ON -DPORTAUDIO=ON -DPORTAUDIO_LIB_PATH=$LOCAL_BUILD/lib/libportaudio.a -DPORTAUDIO_INCLUDE_DIR=$LOCAL_BUILD/include -DCMAKE_PREFIX_PATH=$LOCAL_BUILD -DCMAKE_INSTALL_PREFIX=$LOCAL_BUILD
+
+cd $HOME/BUILD
+make -j3
+make install
+
+
+
+
+
+
+
+
+
+
+
+
+
+
