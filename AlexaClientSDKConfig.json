@@ -1,0 +1,16 @@
+{
+    "alertsCapabilityAgent":{
+        "timerShortSoundFilePath":"/home/pi/alerts/timerShortSound.wav",
+        "alarmSoundFilePath":"/home/pi/alerts/alarmSound.mp3",
+        "databaseFilePath":"/home/pi/alerts/alerts.db",
+        "timerSoundFilePath":"/home/pi/alerts/timerSound.mp3",
+        "alarmShortSoundFilePath":"/home/pi/alerts/alarmShortSound.wav"
+    },
+    "authDelegate":{
+        "clientSecret":"",
+        "deviceSerialNumber":"123",
+        "refreshToken":"Atzr|IwEBICrlrMQLayLseGD8U7uKu6y1RmJt99PGQ9W2Qw9BKiIdg-fGwPb38KUbDfV3DJLAZ5vVqAH3Jne0ms-HBOEWTdZobGJgQgTof9Lu5R1EjZ8MYB1vqLsDcNHm3eKwN6tBEZD4r9krmlJOG22HX7efG_bwcNBt8D2axEj1HKREp8PV9WQhpE8yysAkF2OL89xPHzDNzcQj8I5pllTmaI7ahu4Gog8LgBbkexUJPCe_xpACEFcnnn3mAfbZIKXs-S5UFbELBtHoOK3UQEwPEOpgYohBwdjdG0aJoQQu4ex_pJGKGS6yKB7ZTNg9WVJiw7V9YATqJw9CQNFjFS23JV_YUT6Pc9tLOjpQDYMT63VNK96ldNfS9dYicnKV5eyMV6oiR_Z4o8GHPlZXYw19D_FNhC7ylfA5sZDokVEIIWKu836dbKchBWy-YHicFny1xzmpl_LwJQYHZrX1iV-3Cac2xnGaZ-ARt5ET0GuivQaXXpe1mANpLt1i59FTjdxTzgYHxHMkQtJIemBqLyEKE5r6TlWazDBKw1toYEZNNfd_a6GR5A",
+        "clientId":"amzn1.application-oa2-client.fc570953d9b647028bbcf4a5e32e6df4",
+        "deviceTypeId":"example_pi3"
+    }
+}
